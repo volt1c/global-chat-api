@@ -42,6 +42,9 @@ export class RoomsGateway implements OnGatewayDisconnect {
     const message = `${name}@${client.id} joined [#${data.room}].`
 
     this.roomsManager.join(data.room, client)
+    this.roomsManager.emit(client, SocketsEvents.Join, {
+      who: { id: client.id, name: name },
+    })
     this.roomsManager.emit(client, SocketsEvents.SendMessage, {
       sender: 'Server',
       message,
@@ -56,6 +59,9 @@ export class RoomsGateway implements OnGatewayDisconnect {
     this.roomsManager.emit(client, SocketsEvents.SendMessage, {
       sender: 'Server',
       message,
+    })
+    this.roomsManager.emit(client, SocketsEvents.Leave, {
+      who: { id: client.id, name: name },
     })
     this.roomsManager.leave(client.id)
   }
