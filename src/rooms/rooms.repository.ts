@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import * as config from 'config'
 import { Socket } from 'socket.io'
 import { Room } from './interface/room.interface'
 
@@ -8,9 +9,10 @@ export class RoomsRepository {
   private rooms: Room[]
 
   constructor() {
+    const rooms = config.get<[{ name: string }]>('rooms')
     this.clientsRooms = new Map()
-    this.rooms = new Array(10).fill(undefined).map((_, idx) => ({
-      name: `${idx}`,
+    this.rooms = rooms.map((room, idx) => ({
+      name: `${room.name ?? idx}`,
       clients: [],
     }))
   }
