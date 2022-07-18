@@ -1,4 +1,4 @@
 export interface RoomDto {
   name: string
-  clients: string[]
+  clients: { id: string; name: string }[]
 }
