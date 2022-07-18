@@ -51,4 +51,8 @@ export class RoomsRepository {
       this.clientsRooms.set(client.id, roomId)
     }
   }
+
+  has(roomId: string): boolean {
+    return this.rooms.some((room) => room.name === roomId)
+  }
 }
