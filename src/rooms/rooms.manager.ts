@@ -1,32 +1,31 @@
 import { Injectable } from '@nestjs/common'
 import { Socket } from 'socket.io'
+import { RoomsEmiter } from './rooms.emiter'
 import { RoomsRepository } from './rooms.repository'
 
 @Injectable()
 export class RoomsManager {
-  constructor(private roomsRepository: RoomsRepository) {}
+  constructor(
+    private roomsRepository: RoomsRepository,
+    private emiter: RoomsEmiter,
+  ) {}
 
-  join(roomId: string, client: Socket) {
-    if (!this.roomsRepository.findOne(roomId)) return
-    if (this.roomsRepository.findByClientId(client.id))
+  join(client: Socket, roomId: string) {
+    if (!this.roomsRepository.findOne(roomId)) return false
+    if (this.roomsRepository.findByClientId(client.id)) {
+      this.emiter.emitLeave(client)
       this.roomsRepository.deleteClient(client.id)
+    }
     this.roomsRepository.setClient(roomId, client)
+    this.emiter.emitJoin(client)
   }
 
-  leave(id: string) {
-    return this.roomsRepository.deleteClient(id)
+  leave(client: Socket) {
+    this.emiter.emitLeave(client)
+    this.roomsRepository.deleteClient(client.id)
   }
 
-  emit(roomId: string, event: string, data: any): void
-  emit(client: Socket, event: string, data: any): void
-  emit(clientOrRoomId: Socket | string, event: string, data: any): void {
-    const room =
-      typeof clientOrRoomId === 'string'
-        ? this.roomsRepository.findOne(clientOrRoomId)
-        : this.roomsRepository.findByClientId(clientOrRoomId.id)
-
-    if (room === undefined) return
-
-    room.clients.forEach((client) => client.emit(event, data))
+  message(client: Socket, message: string) {
+    this.emiter.emitMessage(client, message)
   }
 }
