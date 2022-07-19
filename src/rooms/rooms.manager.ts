@@ -7,11 +7,9 @@ export class RoomsManager {
   constructor(private roomsRepository: RoomsRepository) {}
 
   join(roomId: string, client: Socket) {
-    if (
-      this.roomsRepository.findByClientId(client.id) ||
-      !this.roomsRepository.findOne(roomId)
-    )
-      return
+    if (!this.roomsRepository.findOne(roomId)) return
+    if (this.roomsRepository.findByClientId(client.id))
+      this.roomsRepository.deleteClient(client.id)
     this.roomsRepository.setClient(roomId, client)
   }
 
