@@ -21,11 +21,11 @@ export class RoomsRepository {
     return this.rooms
   }
 
-  findOne(id: string): Room {
+  findOne(id: string): Room | undefined {
     return this.rooms.find((room) => room.name === id)
   }
 
-  findByClientId(id: string): Room {
+  findByClientId(id: string): Room | undefined {
     const roomId = this.clientsRooms.get(id)
     return this.rooms.find((room) => room.name === roomId)
   }
