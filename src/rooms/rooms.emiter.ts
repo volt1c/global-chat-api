@@ -15,13 +15,13 @@ export class RoomsEmiter {
   }
 
   emitLeave(client: Socket) {
-    this.emit(client, SocketsEvents.Join, {
+    this.emit(client, SocketsEvents.Leave, {
       who: { id: client.id, name: client.handshake.query.name.toString() },
     })
   }
 
   emitMessage(client: Socket, message: string) {
-    this.emit(client, SocketsEvents.Join, {
+    this.emit(client, SocketsEvents.SendMessage, {
       sender: { id: client.id, name: client.handshake.query.name ?? 'Anon' },
       message,
     })
