@@ -12,8 +12,12 @@ export class RoomsManager {
   ) {}
 
   join(client: Socket, roomId: string) {
-    if (!this.repository.findOne(roomId))
-      throw new WsException('incorrect room id')
+    const room = this.repository.findOne(roomId)
+
+    if (!room) throw new WsException('incorrect room id')
+
+    if (room.max && room.max <= room.clients.length)
+      throw new WsException('room is full')
 
     if (this.repository.findByClientId(client.id)) {
       this.emiter.emitLeave(client)
