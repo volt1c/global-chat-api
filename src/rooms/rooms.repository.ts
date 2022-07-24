@@ -9,11 +9,12 @@ export class RoomsRepository {
   private rooms: Room[]
 
   constructor() {
-    const rooms = config.get<[{ name: string }]>('rooms')
+    const rooms = config.get<[{ name: string; max?: number }]>('rooms')
     this.clientsRooms = new Map()
     this.rooms = rooms.map((room, idx) => ({
       name: `${room.name ?? idx}`,
       clients: [],
+      max: room.max,
     }))
   }
 
