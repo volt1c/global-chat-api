@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { RoomDto } from './dto/room.dto'
 import { RoomsRepository } from './rooms.repository'
 
@@ -13,20 +13,21 @@ export class RoomsService {
         id: client.id,
         name: (client.handshake.query.name ?? 'Anon').toString(),
       })),
+      max: room.max,
     }))
   }
 
   async findOne(roomId: string): Promise<RoomDto> {
-    if (!this.repository.has(roomId))
-      throw new BadRequestException('incorrect id')
+    if (!this.repository.has(roomId)) throw new NotFoundException()
 
-    const { name, clients } = this.repository.findOne(roomId)
+    const { name, clients, max } = this.repository.findOne(roomId)
 
     return {
       name,
       clients: clients.map((client) => ({
         id: client.id,
         name: (client.handshake.query.name ?? 'Anon').toString(),
+        max,
       })),
     }
   }
@@ -34,7 +35,7 @@ export class RoomsService {
   async findByClientId(clientId: string): Promise<RoomDto> {
     const room = this.repository.findByClientId(clientId)
 
-    if (room === undefined) throw new BadRequestException('incorrect id')
+    if (room === undefined) throw new NotFoundException()
 
     return {
       name: room.name,
@@ -42,6 +43,7 @@ export class RoomsService {
         id: client.id,
         name: (client.handshake.query.name ?? 'Anon').toString(),
       })),
+      max: room.max,
     }
   }
 }
