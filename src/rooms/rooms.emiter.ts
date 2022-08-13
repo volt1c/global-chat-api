@@ -36,6 +36,12 @@ export class RoomsEmiter {
     })
   }
 
+  emitError(client: Socket, message: string) {
+    this.emit(client, SocketsEvents.Exception, {
+      message,
+    })
+  }
+
   private emit(client: Socket, event: string, data: any): void {
     const room = this.getRoom(client)
     if (room === undefined) return
