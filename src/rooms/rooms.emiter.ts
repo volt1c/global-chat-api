@@ -10,19 +10,28 @@ export class RoomsEmiter {
 
   emitJoin(client: Socket) {
     this.emit(client, SocketsEvents.Join, {
-      who: { id: client.id, name: client.handshake.query.name.toString() },
+      who: {
+        id: client.id,
+        name: (client.handshake.query.name ?? 'Anon').toString(),
+      },
     })
   }
 
   emitLeave(client: Socket) {
     this.emit(client, SocketsEvents.Leave, {
-      who: { id: client.id, name: client.handshake.query.name.toString() },
+      who: {
+        id: client.id,
+        name: (client.handshake.query.name ?? 'Anon').toString(),
+      },
     })
   }
 
   emitMessage(client: Socket, message: string) {
     this.emit(client, SocketsEvents.SendMessage, {
-      sender: { id: client.id, name: client.handshake.query.name ?? 'Anon' },
+      sender: {
+        id: client.id,
+        name: (client.handshake.query.name ?? 'Anon').toString(),
+      },
       message,
     })
   }
