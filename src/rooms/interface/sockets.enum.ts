@@ -4,4 +4,5 @@ export enum SocketsEvents {
   Connect = 'connect',
   Disconnect = 'disconnect',
   SendMessage = 'send_message',
+  Exception = 'exception',
 }
